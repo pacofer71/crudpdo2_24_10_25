@@ -1,0 +1,113 @@
+<?php
+
+namespace App\Bbdd;
+
+use \PDOException;
+use \PDO;
+
+class Usuario extends Conexion
+{
+    private int $id;
+    private string $email;
+    private string $password;
+
+    private static function executeQuery(string $q, array $parametros = [], bool $devolverAlgo = false)
+    {
+        $stmt = self::getConexion()->prepare($q);
+        try {
+            count($parametros) ? $stmt->execute($parametros) : $stmt->execute();
+        } catch (PDOException $ex) {
+            die("error: " . $ex->getMessage());
+        }
+        if ($devolverAlgo) return $stmt;
+    }
+    public function create()
+    {
+        $q = "insert into Usuario(email, password) values(:e, :p)";
+        self::executeQuery($q, [':e' => $this->email, ':p' => $this->password]);
+    }
+
+    public static function deleteAll(){
+        $q="delete from usuario";
+        self::executeQuery($q);
+    }
+
+    public static function crearUsuarios(int $cant)
+    {
+        $faker = \Faker\Factory::create('es_ES');
+        for ($i = 0; $i < $cant; $i++) {
+            $email = $faker->unique()->freeEmail();
+            $password = "secret0";
+            (new Usuario)
+                ->setEmail($email)
+                ->setPassword($password)
+                ->create();
+        }
+    }
+    public static function devolverIds(): array{
+        $q="select id from Usuario";
+        $stmt=self::executeQuery($q, [], true);
+        $filas=$stmt->fetchAll(PDO::FETCH_OBJ);
+        $ids=[];
+        foreach($filas as $item){
+            $ids[]=$item->id;
+        }
+        return $ids;
+    }
+
+
+
+    /**
+     * Get the value of id
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set the value of id
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of email
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set the value of email
+     */
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of password
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set the value of password
+     */
+    public function setPassword(string $password): self
+    {
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
+
+        return $this;
+    }
+}

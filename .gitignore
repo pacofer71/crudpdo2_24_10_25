@@ -1,0 +1,8 @@
+# Ignorar cualquier archivo .env en cualquier carpeta
+**/.env
+
+# Ignorar cualquier archivo composer.lock en cualquier carpeta
+composer.lock
+
+# Ignorar cualquier carpeta vendor en cualquier ubicación
+**/vendor/

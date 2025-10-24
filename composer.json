@@ -1,0 +1,20 @@
+{
+    "name": "pacofer71/crud2",
+    "description": "Crud tablas 1:N",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "pacofer71",
+            "email": "pacofer71@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6",
+        "fakerphp/faker": "^1.24"
+    }
+}
