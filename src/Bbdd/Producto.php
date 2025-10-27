@@ -36,6 +36,13 @@ class Producto extends Conexion
             ':di' => $this->disponible,
         ]);
     }
+
+    public static function read(): array{
+        $q="select producto.*, email from producto, usuario where usuario_id=usuario.id order by producto.id desc";
+        $stmt=self::executeQuery($q, [], true);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
      public static function deleteAll(){
         $q="delete from producto";
         self::executeQuery($q);

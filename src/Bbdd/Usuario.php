@@ -55,6 +55,21 @@ class Usuario extends Conexion
         return $ids;
     }
 
+    public static function validarUsuario(string $email, string $password): bool{
+        $q="select password from usuario where email=:e";
+        $stmt=self::executeQuery($q, [':e'=>$email], true);
+        $aux=$stmt->fetch(PDO::FETCH_OBJ);
+        //var_dump($aux->password);
+        //die();
+        //$aux vale false si no existe ese email
+        //o un objeto con unico atributo password, $aux->password
+        // Normalmente el fetc se usa como está en la linea de abajo
+        //while($fila=$stmt->fetch(PDO::FETCH_OBJ)){}
+        return ($aux && password_verify($password, $aux->password));
+
+
+    }
+
 
 
     /**
