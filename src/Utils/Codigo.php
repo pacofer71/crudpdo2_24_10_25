@@ -34,4 +34,21 @@ class Codigo{
         </nav>
         TXT;
     }
+    public static function pintarFormulario(int $id, bool $pintarForm){
+        if($pintarForm){
+        echo <<<TXT
+        <form action="delete.php" method='POST'>
+        <input type=hidden name='id' value="$id" />
+        <a href="update.php?id=$id">
+        <i class='fas fa-edit mr-1 text-blue-500'></i>
+        </a>
+        <button type='submit'>
+        <i class="fas fa-trash text-red-500"></i>
+        </button>
+        </form>
+        TXT;
+        }else{
+            echo "<i class='fa-solid fa-circle-exclamation'></i>";
+        }
+    }
 }

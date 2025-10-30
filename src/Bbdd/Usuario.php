@@ -44,15 +44,16 @@ class Usuario extends Conexion
                 ->create();
         }
     }
-    public static function devolverIds(): array{
-        $q="select id from Usuario";
-        $stmt=self::executeQuery($q, [], true);
+    public static function devolverIds(?string $email=null): array{
+        $q=($email==null) ? "select id from Usuario" : "select id from Usuario where email=:e";
+        $opciones=($email==null) ? [] : [':e'=>$email]; 
+        $stmt=self::executeQuery($q, $opciones, true);
         $filas=$stmt->fetchAll(PDO::FETCH_OBJ);
         $ids=[];
         foreach($filas as $item){
             $ids[]=$item->id;
         }
-        return $ids;
+        return $ids; //[1,2,3,4,5,6...], [3];   
     }
 
     public static function validarUsuario(string $email, string $password): bool{

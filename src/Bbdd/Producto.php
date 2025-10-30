@@ -4,6 +4,7 @@ namespace App\Bbdd;
 
 use \PDOException;
 use \PDO;
+use stdClass;
 
 class Producto extends Conexion
 {
@@ -36,16 +37,47 @@ class Producto extends Conexion
             ':di' => $this->disponible,
         ]);
     }
+    public function update(int $id){
+        $q="update producto set nombre=:n, precio=:p, disponible=:di, descripcion=:d where id=:i";
+        self::executeQuery($q, [
+            ':n' => $this->nombre,
+            ':d' => $this->descripcion,
+            ':p' => $this->precio,
+            ':di' => $this->disponible,
+            ':i'=>$id
+        ]);
+    }
 
     public static function read(): array{
         $q="select producto.*, email from producto, usuario where usuario_id=usuario.id order by producto.id desc";
         $stmt=self::executeQuery($q, [], true);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+    public static function getProductoById(int $id): \stdClass{
+        $q="select * from producto where id=:i";
+        $stmt=self::executeQuery($q,[':i'=>$id], true);
+        return ($stmt->fetchAll(PDO::FETCH_OBJ))[0];
+    }
 
-     public static function deleteAll(){
-        $q="delete from producto";
+     public static function deleteAll(?int $id=null){
+        $q=($id==null) ? "delete from producto" : "delete from producto where id=$id";
         self::executeQuery($q);
+    }
+
+    public static function existeNombre(string $nombre, ?int $id_producto=null): bool{
+        $q=($id_producto==null) ? "select id from producto where nombre=:n"
+            :"select id from producto where nombre=:n AND id != :i";
+        $opciones=($id_producto==null) ? [':n'=>$nombre] : [':n'=>$nombre, ':i'=>$id_producto]; 
+        $stmt=self::executeQuery($q, $opciones, true);
+        $datos=$stmt->fetchAll(PDO::FETCH_OBJ);
+        return count($datos);
+    }
+
+    public static function productoPerteneceUsuario(int $idP, int $idU): bool{
+        $q="select id from producto where id=:ip AND usuario_id=:iu";
+        $stmt=self::executeQuery($q, [':ip'=>$idP, ':iu'=>$idU], true);
+        $datos=$stmt->fetchAll(PDO::FETCH_OBJ);
+        return count($datos);
     }
 
     public static function crearProductos(int $cant)

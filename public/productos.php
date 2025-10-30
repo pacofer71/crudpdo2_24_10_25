@@ -33,6 +33,11 @@ $productos = Producto::read();
     Codigo::pintarNav("Listado de Productos");
     ?>
     <div class="p-8">
+        <div class="flex flex-row-reverse mb-2">
+            <a href="nuevo.php" class="p-2 rounded-xl font-bold text-white bg-green-500 hover:bg-green-700">
+                <i class="fas fa-add mr-1"></i>NUEVO
+            </a>
+        </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -58,35 +63,54 @@ $productos = Producto::read();
             </thead>
             <tbody>
                 <?php foreach ($productos as $item):
-                    $color=($item->disponible=='SI') ? "bg-green-500" : "bg-red-500";
-                    $colorFilaUsuario=($item->email==$email) ? "bg-red-100" : "bg-white"; 
+                    $color = ($item->disponible == 'SI') ? "bg-green-500" : "bg-red-500";
+                    $colorFilaUsuario = ($item->email == $email) ? "bg-red-100" : "bg-white";
+
                 ?>
                     <tr class="<?= $colorFilaUsuario; ?> border-b dark:border-gray-700 border-gray-200">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <?= $item->nombre ?>
+                            <?= $item->nombre. " (". $item->id .")"; ?>
                         </th>
                         <td class="px-6 py-4">
                             <?= $item->descripcion ?>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4  whitespace-nowrap">
                             <?= $item->precio ?> €
                         </td>
                         <td class="px-6 py-4">
-                            <p class="<?=$color;?> p-2 rounded-xl font-bold text-white text-center">
-                            <?= $item->disponible ?>
+                            <p class="<?= $color; ?> p-2 rounded-xl font-bold text-white text-center">
+                                <?= $item->disponible ?>
                             </p>
                         </td>
                         <td class="px-6 py-4">
                             <?= $item->email ?>
                         </td>
                         <td class="px-6 py-4">
-                            BOTONES
+                            <?php
+                            $pintar = ($item->email == $email);
+                            Codigo::pintarFormulario($item->id, $pintar);
+                            ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
+    <?php
+    if (isset($_SESSION['mensaje'])) {
+        echo <<< TXT
+                <script>
+                Swal.fire({
+                icon: "success",
+                title: "{$_SESSION['mensaje']}",
+                showConfirmButton: false,
+                timer: 1500
+                });
+                </script>
+            TXT;
+        unset($_SESSION['mensaje']);
+    }
+    ?>
 </body>
 
 </html>
